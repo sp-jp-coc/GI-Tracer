@@ -1,0 +1,35 @@
+name: Import Svarog-Tracer
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout GI-Tracer
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Import Svarog-Tracer
+        run: |
+          git clone --depth 1 https://github.com/Ci3t/Svarog-Tracer.git /tmp/svarog-tracer
+          rsync -a --delete --exclude='.git' /tmp/svarog-tracer/ ./
+          rm -f .github/workflows/import-svarog-tracer.yml
+
+      - name: Commit imported repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Import Svarog-Tracer"
+          git push origin HEAD:main
