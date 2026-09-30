@@ -27,6 +27,9 @@ jobs:
         uses: actions/configure-pages@v5
         with:
           enablement: true
+      - name: Fix compiled asset base paths
+        run: |
+          find . -type f \( -name "*.js" -o -name "*.css" -o -name "*.html" \) -print0 | xargs -0 sed -i 's#/Svarog-Tracer/#/GI-Tracer/#g'
       - name: Upload static site
         uses: actions/upload-pages-artifact@v3
         with:
